@@ -5,9 +5,10 @@ import math
 
 class data_preprocessing():
     def __init__(self):
-        self.root = os.path.join('data')
+        self.root = os.path.join('ROUETER')
         self.raw_list = ['10_19_finan.csv','00_09_finan.csv','90_99_finan.csv']
-        self.files = ['10_19_finan.csv','00_09_finan.csv','90_99_.csv']
+        self.files = ['10_19_.csv','00_09_.csv','90_99_.csv']
+        self.nice_companies = ['from10NiceCompanies.csv','from00NiceCompanies.csv',None]
         self.column_standards = pd.read_csv(os.path.join(self.root, 'column_ref.csv'))['Field'].unique()
 
     def remove_repetation(self):
@@ -54,7 +55,7 @@ class data_preprocessing():
         '''
             pick specific fields
         '''
-        for idx, file in enumerate(self.files):
+        for file in self.files:
             r = os.path.join(self.root, file)
             df = pd.read_csv(r)
             drop_i = []
@@ -64,7 +65,7 @@ class data_preprocessing():
             df = df.drop(drop_i)
             df.to_csv(r, index=False)
 
-    def pick_companies(self, K):
+    def pick_k_companies(self, K):
         '''
             pick K companies
         :param K: the number of companies to be selected (int)
@@ -77,9 +78,25 @@ class data_preprocessing():
             drop_c = companies[K:]
             df = df.drop(columns=drop_c)
             df.to_csv(r, index=False)
+    def pick_nice_companies(self):
+        '''
+            pick faithful companies
+        '''
+
+        for file, company in zip(self.files, self.nice_companies):
+            r = os.path.join(self.root, file)
+            if company is None:
+                print('Nice companies does not exist')
+                break
+            df = pd.read_csv(r)
+            nice = pd.read_csv(os.path.join(self.root, company)).columns
+            drop_c = [c for c in df.columns if c not in nice]
+            df.drop(columns=drop_c)
+            df.to_csv(r, index=False)
 
 d = data_preprocessing()
 # d.remove_repetation()
 d.pick_quarter()
 d.pick_field()
-d.pick_companies(40)
+# d.pick_k_companies(40)
+d.pick_nice_companies()
