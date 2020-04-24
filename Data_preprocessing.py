@@ -1,5 +1,6 @@
 import pandas as pd
 import os
+from constants import STANDARD_COLUMN
 import numpy as np
 import math
 
@@ -9,7 +10,7 @@ class data_preprocessing():
         self.raw_list = ['10_19_finan.csv','00_09_finan.csv','90_99_finan.csv']
         self.files = ['10_19_.csv','00_09_.csv','90_99_.csv']
         self.nice_companies = ['from10NiceCompanies.csv','from00NiceCompanies.csv',None]
-        self.column_standards = pd.read_csv(os.path.join(self.root, 'column_ref.csv'))['Field'].unique()
+        # self.column_standards = pd.read_csv(os.path.join(self.root, 'column_ref.csv'))['Field'].unique()
 
     def remove_repetation(self):
         '''
@@ -48,7 +49,7 @@ class data_preprocessing():
             r = os.path.join(self.root, file)
             df = pd.read_csv(r)
             drop_list = [c for c in df.columns if df.loc[[2],[c]].values[0][0] != 'Quarterly'][2:]
-            df.drop(columns=drop_list)
+            df = df.drop(columns=drop_list)
             df.to_csv(r, index=False)
 
     def pick_field(self):
@@ -91,12 +92,12 @@ class data_preprocessing():
             df = pd.read_csv(r)
             nice = pd.read_csv(os.path.join(self.root, company)).columns
             drop_c = [c for c in df.columns if c not in nice]
-            df.drop(columns=drop_c)
+            df = df.drop(columns=drop_c)
             df.to_csv(r, index=False)
 
-d = data_preprocessing()
-# d.remove_repetation()
-d.pick_quarter()
-d.pick_field()
-# d.pick_k_companies(40)
-d.pick_nice_companies()
+# d = data_preprocessing()
+# # d.remove_repetation()
+# d.pick_quarter()
+# d.pick_field()
+# # d.pick_k_companies(40)
+# d.pick_nice_companies()
