@@ -83,4 +83,3 @@ d = data_preprocessing()
 d.pick_quarter()
 d.pick_field()
 d.pick_companies(40)
-co
