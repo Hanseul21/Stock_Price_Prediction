@@ -41,7 +41,7 @@ class data_preprocessing():
             df = df.drop(missing_list)
             df.to_csv(os.path.join(self.root, self.files[idx_file]), index=False)
 
-    def pick_quarter(self):
+    def only_quarter(self):
         '''
             remove non-quarter based companies (e.g., semi-annual)
         '''
@@ -63,6 +63,16 @@ class data_preprocessing():
             for idx in range(len(df)):
                 if df.loc[[idx],['Field']].values[0][0] not in self.column_standards:
                     drop_i.append(idx)
+            df = df.drop(drop_i)
+            df.to_csv(r, index=False)
+    def pick_field_by_standards(self):
+        '''
+            pick field by standards
+        '''
+        for file in self.files:
+            r = os.path.join(self.root, file)
+            df = pd.read_csv(r)
+            drop_i = [idx for idx in range(len(df)) if df.loc[[idx],['Field']].values[0][0] not in STANDARD_COLUMN]
             df = df.drop(drop_i)
             df.to_csv(r, index=False)
 
@@ -94,10 +104,18 @@ class data_preprocessing():
             drop_c = [c for c in df.columns if c not in nice]
             df = df.drop(columns=drop_c)
             df.to_csv(r, index=False)
+    def get_files(self):
 
-# d = data_preprocessing()
-# # d.remove_repetation()
-# d.pick_quarter()
+        print(self.files)
+        print('completely finished!')
+
+
+processor = data_preprocessing()
+processor.remove_repetation()
+processor.only_quarter()
 # d.pick_field()
+processor.pick_field_by_standards()
 # # d.pick_k_companies(40)
-# d.pick_nice_companies()
+processor.pick_nice_companies()
+
+processor.get_files()
