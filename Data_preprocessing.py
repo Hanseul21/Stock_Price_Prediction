@@ -16,7 +16,8 @@ class data_collection():
             self.symbols = symbols
         # check for fault
         marketcaps = finance.get_quote_yahoo(self.symbols)['marketCap']
-        self.today_marketcaps = dict(zip(marketcaps.index, marketcaps.values))
+        prices = finance.get_quote_yahoo(self.symbols)['price']
+        self.numstocks = dict([(f, marketcaps[f] / prices[f]) for f in list(marketcaps.index)])
 
     def look_up_dict(self):
         df = pd.read_csv('ISIN_to_Symbol.csv')
@@ -36,14 +37,13 @@ class data_collection():
             df = finance.DataReader(symbol,'yahoo','1990-01-01', '2020-05-15')
             df['Date'] = [date.strftime('%Y%m%d') for date in df.index]
             df =df.drop(columns=['Close'])
-            num_stocks = self.today_marketcaps[symbol]/df.iloc[-1]['Adj Close']
-            df['MarketCap'] = [price*num_stocks for price in df['Adj Close'].values.reshape(-1)]
+            df['MarketCap'] = [price*self.numstocks[symbol] for price in df['Adj Close'].values.reshape(-1)]
             df = df.rename(columns={'Adj Close':'Close'})
             df = df[['Date','Open','High','Low','Close','Volume','MarketCap']]
             print(self.Symbol_to_ISIN[symbol]+'.csv')
             df.to_csv(os.path.join('STOCK', self.Symbol_to_ISIN[symbol]+'.csv'),index=False)
 
-# print(finance.get_quote_yahoo('FP.PA')['marketCap'])
+print(finance.get_quote_yahoo('NTDMF')['marketCap'])
 symbols = None #['MSFT', 'AAPL','HK:0700','SE:2222']
 c = data_collection()
 c.stock_prices()
