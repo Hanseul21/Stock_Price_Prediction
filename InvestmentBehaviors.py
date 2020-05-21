@@ -84,9 +84,9 @@ output_dim = targetOffset-1
 l2 = 0.0001
 learningRate = 0.001
 lastTradeTime = 20200000
-testStartTime = 20170000
-FirstDay = 20110000
-LastDay = 20200000
+testStartTime = 20180000
+# FirstDay = 20110000
+# LastDay = 20200000
 
 
 enterprise = 'GOOGL'
